@@ -118,12 +118,21 @@ app.get("/logout", (req, res) => {
 });
 
 // Protected Route
-app.get("/home", (req, res) => {
-  if (!req.isAuthenticated()) {
-    return res.status(401).json({ message: "Unauthorized" });
+// app.get("/home", (req, res) => {
+//   if (!req.isAuthenticated()) {
+//     return res.status(401).json({ message: "Unauthorized" });
+//   }
+//   res.json({ message: "Welcome to your home page!", user: req.user });
+// });
+
+app.get("/api/user/email", (req, res) => {
+  if (req.isAuthenticated()) {
+    res.json({ email: req.user.email });
+  } else {
+    res.status(401).json({ message: "Unauthorized" });
   }
-  res.json({ message: "Welcome to your home page!", user: req.user });
 });
+
 
 // Start the Server
 app.listen(3000, () => {
