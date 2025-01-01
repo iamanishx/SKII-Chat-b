@@ -1,3 +1,4 @@
+// authentication.js
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
@@ -6,9 +7,7 @@ const session = require("express-session");
 const mongoose = require("mongoose");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
-const app = express();
-
-// Connect to MongoDB
+// MongoDB Connection
 mongoose
   .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("Connected to MongoDB"))
@@ -23,6 +22,9 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model("User", userSchema);
 
+// Create Express App
+const app = express();
+
 // Middleware
 app.use(express.json());
 app.use(
@@ -36,13 +38,13 @@ app.use(
 // Session Middleware
 app.use(
   session({
-    secret: process.env.SESSION_SECRET, // Replace with a strong secret key
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: false, // Set to true if using HTTPS
-      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+      secure: false,
+      maxAge: 1000 * 60 * 60 * 24 * 7,
     },
   })
 );
@@ -50,7 +52,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Google OAuth Strategy
+// Passport Google OAuth
 passport.use(
   new GoogleStrategy(
     {
@@ -76,7 +78,6 @@ passport.use(
   )
 );
 
-// Passport Serialize/Deserialize
 passport.serializeUser((user, done) => {
   done(null, user.id);
 });
@@ -91,8 +92,6 @@ passport.deserializeUser(async (id, done) => {
 });
 
 // Routes
-
-// Google OAuth Routes
 app.get(
   "/auth/google",
   passport.authenticate("google", { scope: ["profile", "email"] })
@@ -106,7 +105,6 @@ app.get(
   }
 );
 
-// Logout Route
 app.get("/logout", (req, res) => {
   req.logout((err) => {
     if (err) {
@@ -117,14 +115,6 @@ app.get("/logout", (req, res) => {
   });
 });
 
-// Protected Route
-// app.get("/home", (req, res) => {
-//   if (!req.isAuthenticated()) {
-//     return res.status(401).json({ message: "Unauthorized" });
-//   }
-//   res.json({ message: "Welcome to your home page!", user: req.user });
-// });
-
 app.get("/api/user/email", (req, res) => {
   if (req.isAuthenticated()) {
     res.json({ email: req.user.email });
@@ -133,9 +123,4 @@ app.get("/api/user/email", (req, res) => {
   }
 });
 
-
-// Start the Server
-app.listen(3000, () => {
-  console.log("Server running on http://localhost:3000");
-});
- 
+module.exports = app;
