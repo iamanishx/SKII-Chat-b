@@ -26,12 +26,22 @@ const User = mongoose.model("User", userSchema);
 const app = express();
 
 // Middleware
+// Define CORS options
 const corsOptions = {
-  origin: ['http://localhost:5173', 'https://skii-chat.up.railway.app'], 
-  methods: ["GET", "POST", "OPTIONS"], 
-  credentials: true,  
-  allowedHeaders: ["Content-Type", "Authorization"],  
+  origin: ['http://localhost:5173', 'https://skii-chat.up.railway.app'], // Allow both local and deployed frontend
+  methods: ['GET', 'POST', 'OPTIONS'], // Allowed HTTP methods
+  credentials: true, // Include cookies and credentials
+  allowedHeaders: ['Content-Type', 'Authorization'], // Custom headers if needed
 };
+
+// Apply middleware
+app.use(cors(corsOptions));
+
+// Handle preflight requests explicitly
+app.options('*', cors(corsOptions));
+
+// JSON parsing middleware
+app.use(express.json());
 
 // Session Middleware
 app.use(
