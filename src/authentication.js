@@ -26,14 +26,12 @@ const User = mongoose.model("User", userSchema);
 const app = express();
 
 // Middleware
-app.use(express.json());
-app.use(
-  cors({
-    origin: ['http://localhost:5173', 'https://skii-chat.up.railway.app'],    
-    methods: ["GET", "POST"],
-    credentials: true,
-  })
-);
+const corsOptions = {
+  origin: ['http://localhost:5173', 'https://skii-chat.up.railway.app'], 
+  methods: ["GET", "POST", "OPTIONS"], 
+  credentials: true,  
+  allowedHeaders: ["Content-Type", "Authorization"],  
+};
 
 // Session Middleware
 app.use(
