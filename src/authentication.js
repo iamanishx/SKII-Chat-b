@@ -51,9 +51,11 @@ app.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // Use secure cookies in production
-      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+      secure: true, // Force secure in production
+      sameSite: 'none', // Required for cross-site cookies
+      maxAge: 1000 * 60 * 60 * 24 * 7,
     },
+    proxy: true // Trust the reverse proxy
   })
 );
 
