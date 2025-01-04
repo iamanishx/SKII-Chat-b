@@ -115,7 +115,7 @@ app.get(
   "/auth/google/callback",
   passport.authenticate("google", { failureRedirect: "/" }),
   (req, res) => {
-    res.redirect("https://0492-103-182-83-54.ngrok-free.app/home");
+    res.redirect("http://localhost:5173/home");
   }
 );
 
