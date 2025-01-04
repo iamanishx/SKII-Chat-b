@@ -28,7 +28,7 @@ const app = express();
 // Middleware
 // Define CORS options
 const corsOptions = {
-  origin: ['http://localhost:5173', 'https://skii-chat.up.railway.app'], // Allow both local and deployed frontend
+  origin: ['http://localhost:5173', 'https://skii-chat.up.railway.app','https://0492-103-182-83-54.ngrok-free.app'], // Allow both local and deployed frontend
   methods: ['GET', 'POST', 'OPTIONS'], // Allowed HTTP methods
   credentials: true, // Include cookies and credentials
   allowedHeaders: ['Content-Type', 'Authorization'], // Custom headers if needed
@@ -73,6 +73,7 @@ passport.use(
         ? "https://skii-chat.up.railway.app/auth/google/callback"
         : "http://localhost:3000/auth/google/callback",
     },
+    
     async (accessToken, refreshToken, profile, done) => {
       try {
         let user = await User.findOne({ oauthId: profile.id });
@@ -114,7 +115,7 @@ app.get(
   "/auth/google/callback",
   passport.authenticate("google", { failureRedirect: "/" }),
   (req, res) => {
-    res.redirect("http://localhost:5173/home");
+    res.redirect("https://0492-103-182-83-54.ngrok-free.app/home");
   }
 );
 
