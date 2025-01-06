@@ -7,7 +7,7 @@ const socketidToEmailMap = new Map();
 module.exports = (server) => {
   const io = new Server(server, {
     cors: {
-      origin: "http://localhost:5173", // Update as needed
+      origin: "https://skii-chat.vercel.app", // Update as needed
       methods: ["GET", "POST"],
     },
   });
