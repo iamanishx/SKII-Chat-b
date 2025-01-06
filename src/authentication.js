@@ -27,7 +27,7 @@ const app = express();
 // Middleware
 // Define CORS options
 const corsOptions = {
-  origin: ['http://localhost:5173', 'https://skii-chat.up.railway.app','https://0492-103-182-83-54.ngrok-free.app'], // Allow both local and deployed frontend
+  origin: ['http://localhost:5173', 'https://skii-chat.up.railway.app','https://skii-chat.vercel.app'], // Allow both local and deployed frontend
   methods: ['GET', 'POST', 'OPTIONS'], // Allowed HTTP methods
   credentials: true, // Include cookies and credentials
   allowedHeaders: ['Content-Type', 'Authorization'], // Custom headers if needed
@@ -114,7 +114,7 @@ app.get(
   "/auth/google/callback",
   passport.authenticate("google", { failureRedirect: "/" }),
   (req, res) => {
-    res.redirect("http://localhost:5173/home");
+    res.redirect("https://skii-chat.vercel.app/home");
   }
 );
 
@@ -124,7 +124,7 @@ app.get("/logout", (req, res) => {
       console.error("Error during logout:", err);
       return res.status(500).json({ message: "Logout failed" });
     }
-    res.redirect("http://localhost:5173/");
+    res.redirect("https://skii-chat.vercel.app/");
   });
 });
 
