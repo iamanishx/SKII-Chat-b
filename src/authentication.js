@@ -114,7 +114,7 @@ app.get(
   "/auth/google/callback",
   passport.authenticate("google", { failureRedirect: "/" }),
   (req, res) => {
-    res.redirect("http://localhost:5173/home");
+    res.redirect("https://skii-chat.vercel.app/home");
   }
 );
 
