@@ -5,6 +5,7 @@ const turn = require("./src/turn");
 const initializeSocket = require("./src/socket");  
 const cors = require("cors");
 
+const app = express();   
 
 const corsOptions = {
   origin: "https://skii-chat.vercel.app",  
@@ -13,10 +14,6 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-
-const app = express();   
-
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
