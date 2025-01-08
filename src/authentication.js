@@ -106,12 +106,12 @@ passport.deserializeUser(async (id, done) => {
 
 // Routes
 app.get(
-  "/auth/google",
+  "/google",
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
 app.get(
-  "/auth/google/callback",
+  "/google/callback",
   passport.authenticate("google", { failureRedirect: "/" }),
   (req, res) => {
     res.redirect("https://skii-chat.vercel.app/home");

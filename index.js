@@ -1,17 +1,24 @@
-// index.js
 const http = require("http");
-const app = require("./src/authentication");
-const initializeSocket = require("./src/socket");
+const express = require("express");
+const authentication = require("./src/authentication");  
+const turn = require("./src/turn");  
+const initializeSocket = require("./src/socket");  
 
-// Create HTTP server
-const server = http.createServer(app);
+const app = express();   
 
-// Initialize Socket.IO
-initializeSocket(server);
 
-// Start Server
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.use("/auth", authentication);   
+
+app.use("/api", turn);  
+
+const server = http.createServer(app);  
+initializeSocket(server);   
+
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
- 
+//http://localhost:3000/api/get-turn-credentials
