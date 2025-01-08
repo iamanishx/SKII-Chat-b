@@ -3,6 +3,16 @@ const express = require("express");
 const authentication = require("./src/authentication");  
 const turn = require("./src/turn");  
 const initializeSocket = require("./src/socket");  
+const cors = require("cors");
+
+
+const corsOptions = {
+  origin: "https://skii-chat.vercel.app",  
+  methods: "GET,POST",  
+  credentials: true,  
+};
+
+app.use(cors(corsOptions));
 
 const app = express();   
 
