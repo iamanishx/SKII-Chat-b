@@ -128,7 +128,7 @@ app.get("/logout", (req, res) => {
   });
 });
 
-app.get("/api/user/email", (req, res) => {
+app.get("/user/email", (req, res) => {
   if (req.isAuthenticated()) {
     res.json({ email: req.user.email });
   } else {
