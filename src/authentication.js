@@ -4,6 +4,7 @@ const cors = require("cors");
 const passport = require("passport");
 const session = require("express-session");
 const mongoose = require("mongoose");
+const sessionConfig = require("./config/sessionConfig"); 
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
 // MongoDB Connection
@@ -38,27 +39,8 @@ app.use(cors(corsOptions));
 
 // Handle preflight requests explicitly
 app.options('*', cors(corsOptions));
-
-// JSON parsing middleware
 app.use(express.json());
-
-// Session Middleware
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      httpOnly: true,
-      secure: true, // Force secure in production
-      sameSite: 'none', // Required for cross-site cookies
-      maxAge: 1000 * 60 * 60 * 24 * 7,
-    },
-    proxy: true // Trust the reverse proxy
-  })
-);
-
-
+app.use(sessionConfig); // Use session middleware
 app.use(passport.initialize());
 app.use(passport.session());
 
