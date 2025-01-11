@@ -45,14 +45,16 @@ app.use(express.json());
 // Session Middleware
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || "hardcoded_secret_for_testing", // Use environment variable for production
-    resave: false, // Prevent unnecessary session saving
-    saveUninitialized: false, // Don't save uninitialized sessions
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
     cookie: {
-      httpOnly: true, // Prevent client-side JS access to cookies
-      secure: true, // Only transmit cookies over HTTPS
-      sameSite: "none", // Required for cross-origin cookies
-      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // Secure only in production
+      domain: "https://skii-chat.vercel.app/", // Ensure this matches your frontend/backend domain
+
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // Adjust for local development
+      maxAge: 1000 * 60 * 60 * 24 * 7,
     },
   })
 );
