@@ -24,7 +24,7 @@ const User = mongoose.model("User", userSchema);
 
 // Create Express App
 const app = express();
-app.set("trust proxy", true);
+app.set("trust proxy", 1);
 
 // Middleware
 // Define CORS options
