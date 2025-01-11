@@ -8,14 +8,14 @@ const sessionConfig = session({
   saveUninitialized: false,
   store: MongoStore.create({
     mongoUrl: process.env.MONGO_URI,
-    collectionName: "sessions", // Collection name for sessions
-    ttl: 7 * 24 * 60 * 60, // Session TTL (7 days)
+    collectionName: "sessions",  
+    ttl: 7 * 24 * 60 * 60,  
   }),
   cookie: {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production", // Secure cookies in production
+    secure: process.env.NODE_ENV === "production",  
     sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-    maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+    maxAge: 1000 * 60 * 60 * 24 * 7,  
   },
 });
 
