@@ -51,6 +51,8 @@ app.use(
     cookie: {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production", // Secure only in production
+      domain: "https://skii-chat.vercel.app/", // Ensure this matches your frontend/backend domain
+
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // Adjust for local development
       maxAge: 1000 * 60 * 60 * 24 * 7,
     },
