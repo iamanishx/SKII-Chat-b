@@ -9,8 +9,10 @@ const app = express();
 
 const corsOptions = {
   origin: "https://skii-chat.vercel.app",  
-  methods: "GET,POST",  
+  methods: ['GET', 'POST', 'OPTIONS'], 
   credentials: true,  
+  allowedHeaders: ['Content-Type', 'Authorization'], 
+
 };
 
 app.use(cors(corsOptions));
@@ -29,4 +31,3 @@ const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
-//http://localhost:3000/api/get-turn-credentials
