@@ -50,11 +50,10 @@ app.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: true, // Force secure in production
-      sameSite: 'none', // Required for cross-site cookies
+      secure: process.env.NODE_ENV === "production", // Secure only in production
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // Adjust for local development
       maxAge: 1000 * 60 * 60 * 24 * 7,
     },
-    proxy: true // Trust the reverse proxy
   })
 );
 

@@ -12,11 +12,14 @@ const API_TOKEN = process.env.API_TOKEN;
 router.get("/get-turn-credentials", async (req, res) => {
   try {
     const response = await axios.post(
-      `https://api.cloudflare.com/client/v4/accounts/${TURN_TOKEN_ID}/turn/credentials`,
-      {},
+      `https://rtc.live.cloudflare.com/v1/turn/keys/${TURN_TOKEN_ID}/credentials/generate`,
+      {
+        ttl: 86400, // Send the expected payload
+      },
       {
         headers: {
           Authorization: `Bearer ${API_TOKEN}`,
+          "Content-Type": "application/json", // Explicitly set Content-Type
         },
       }
     );
