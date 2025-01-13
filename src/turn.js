@@ -24,7 +24,7 @@ router.get("/get-turn-credentials", async (req, res) => {
       }
     );
 
-    res.json(response.data.result);  
+    res.json(response.data.iceServers);  
   } catch (error) {
     console.error("Error generating TURN credentials:", error.response?.data || error.message);
     res.status(500).send("Failed to generate TURN credentials");
