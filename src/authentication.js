@@ -26,22 +26,34 @@ const User = mongoose.model("User", userSchema);
 const app = express();
 app.set("trust proxy", true);
 
-// Middleware
-// Define CORS options
+
 const corsOptions = {
-  origin: ["https://vc.mbxd.xyz"], // Allow both local and deployed frontend
-  methods: ['GET', 'POST', 'OPTIONS'], // Allowed HTTP methods
-  credentials: true, // Include cookies and credentials
-  allowedHeaders: ['Content-Type', 'Authorization'], // Custom headers if needed
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    
+    const allowedOrigins = [
+      'http://localhost:5173',  
+      'https://vc.mbxd.xyz',   
+      'http://localhost:3000'   
+    ];
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'X-Requested-With', 'Accept'],
+  optionsSuccessStatus: 200 
 };
 
-// Apply middleware
 app.use(cors(corsOptions));
 
-// Handle preflight requests explicitly
 app.options('*', cors(corsOptions));
 app.use(express.json());
-app.use(sessionConfig); // Use session middleware
+app.use(sessionConfig); 
 app.use(passport.initialize());
 app.use(passport.session());
 
