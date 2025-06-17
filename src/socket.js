@@ -57,6 +57,12 @@ module.exports = (server) => {
                 room,
             });
         });
+        socket.on("room:join", ({ room, email }) => {
+            socket.join(room);
+            socket.broadcast
+                .to(room)
+                .emit("user:joined", { id: socket.id, room, email });
+        });
 
         socket.on("call:accepted", ({ to, answer }) => {
             const room = socketToRoomMap.get(socket.id);
