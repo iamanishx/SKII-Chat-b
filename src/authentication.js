@@ -29,7 +29,7 @@ app.set("trust proxy", true);
 // Middleware
 // Define CORS options
 const corsOptions = {
-  origin: [process.env.FRONTEND_URL], // Allow both local and deployed frontend
+  origin: ["https://vc.mbxd.xyz"], // Allow both local and deployed frontend
   methods: ['GET', 'POST', 'OPTIONS'], // Allowed HTTP methods
   credentials: true, // Include cookies and credentials
   allowedHeaders: ['Content-Type', 'Authorization'], // Custom headers if needed
