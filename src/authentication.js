@@ -29,7 +29,7 @@ app.set("trust proxy", true);
 // Middleware
 // Define CORS options
 const corsOptions = {
-  origin: ['http://localhost:5173'], // Allow both local and deployed frontend
+  origin: [process.env.FRONTEND_URL], // Allow both local and deployed frontend
   methods: ['GET', 'POST', 'OPTIONS'], // Allowed HTTP methods
   credentials: true, // Include cookies and credentials
   allowedHeaders: ['Content-Type', 'Authorization'], // Custom headers if needed
@@ -52,7 +52,7 @@ passport.use(
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: process.env.NODE_ENV === "production"
-        ? "https://skii-chat.up.railway.app/auth/google/callback"
+        ? process.env.FRONTEND_URL + "/auth/google/callback"
         : "http://localhost:3000/auth/google/callback",
     },
     
@@ -97,7 +97,7 @@ app.get(
   "/google/callback",
   passport.authenticate("google", { failureRedirect: "/" }),
   (req, res) => {
-    res.redirect("http://localhost:5173/home");
+    res.redirect(process.env.FRONTEND_URL + "/home");
   }
 );
 
@@ -107,7 +107,7 @@ app.get("/logout", (req, res) => {
       console.error("Error during logout:", err);
       return res.status(500).json({ message: "Logout failed" });
     }
-    res.redirect("http://localhost:5173/");
+    res.redirect(process.env.FRONTEND_URL);
   });
 });
 
