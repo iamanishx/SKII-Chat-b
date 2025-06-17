@@ -18,7 +18,7 @@ module.exports = (server) => {
     io.on("connection", (socket) => {
         console.log(`Socket Connected`, socket.id);
 
-        // SINGLE room:join handler - FIXED
+        // SINGLE room:join handler
         socket.on("room:join", (data) => {
             const { email, room } = data;
             
@@ -40,7 +40,7 @@ module.exports = (server) => {
             socket.to(room).emit("user:joined", { 
                 email, 
                 id: socket.id, 
-                room  // This was missing!
+                room  // Include room!
             });
             
             // Confirm to sender
@@ -50,7 +50,7 @@ module.exports = (server) => {
             });
         });
 
-        socket.on("user:call", ({ to, offer, room }) => { // Add room parameter
+        socket.on("user:call", ({ to, offer, room }) => {
             console.log(`Call initiated in room ${room} from ${socket.id} to ${to}`);
             io.to(to).emit("incoming:call", {
                 from: socket.id,
@@ -59,7 +59,6 @@ module.exports = (server) => {
             });
         });
 
-        // ICE candidate handler - GOOD
         socket.on("peer:ice-candidate", ({ candidate, to, room }) => {
             console.log(`📤 Forwarding ICE candidate from ${socket.id} to ${to} in room ${room}`);
             io.to(to).emit("peer:ice-candidate", {
@@ -69,7 +68,7 @@ module.exports = (server) => {
             });
         });
 
-        socket.on("call:accepted", ({ to, answer, room }) => { // Add room parameter
+        socket.on("call:accepted", ({ to, answer, room }) => {
             console.log(`Call accepted in room ${room} by ${socket.id}`);
             io.to(to).emit("call:accepted", {
                 from: socket.id,
