@@ -1,6 +1,5 @@
 require("dotenv").config();
 const express = require("express");
-const cors = require("cors");
 const passport = require("passport");
 const session = require("express-session");
 const mongoose = require("mongoose");
@@ -22,41 +21,13 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model("User", userSchema);
 
-// Create Express App
-const app = express();
-app.set("trust proxy", true);
+// Create Express Router instead of app
+const router = express.Router();
 
-
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true);
-    
-    const allowedOrigins = [
-      'http://localhost:5173',  
-      'https://vc.mbxd.xyz',   
-      'http://localhost:3000',
-      'http://vc.mbxd.xyz'  
-    ];
-    
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  credentials: true,
-  allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'X-Requested-With', 'Accept'],
-  optionsSuccessStatus: 200 
-};
-
-app.use(cors(corsOptions));
-
-app.options('*', cors(corsOptions));
-app.use(express.json());
-app.use(sessionConfig); 
-app.use(passport.initialize());
-app.use(passport.session());
+router.use(express.json());
+router.use(sessionConfig); 
+router.use(passport.initialize());
+router.use(passport.session());
 
 // Passport Google OAuth
 passport.use(
@@ -101,12 +72,12 @@ passport.deserializeUser(async (id, done) => {
 });
 
 // Routes
-app.get(
+router.get(
   "/google",
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
-app.get(
+router.get(
   "/google/callback",
   passport.authenticate("google", { failureRedirect: "/" }),
   (req, res) => {
@@ -114,7 +85,7 @@ app.get(
   }
 );
 
-app.get("/logout", (req, res) => {
+router.get("/logout", (req, res) => {
   req.logout((err) => {
     if (err) {
       console.error("Error during logout:", err);
@@ -124,7 +95,7 @@ app.get("/logout", (req, res) => {
   });
 });
 
-app.get("/user/email", (req, res) => {
+router.get("/user/email", (req, res) => {
   if (req.isAuthenticated()) {
     res.json({ email: req.user.email });
   } else {
@@ -132,4 +103,4 @@ app.get("/user/email", (req, res) => {
   }
 });
 
-module.exports = app;
+module.exports = router;
