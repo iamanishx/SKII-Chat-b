@@ -52,7 +52,7 @@ passport.use(
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: process.env.NODE_ENV === "production"
-        ? process.env.FRONTEND_URL + "/auth/google/callback"
+        ? process.env.BACKEND_URL + "/auth/google/callback"
         : "http://localhost:3000/auth/google/callback",
     },
     
