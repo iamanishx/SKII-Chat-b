@@ -7,7 +7,7 @@ const socketToRoomMap = new Map(); // Add room tracking
 module.exports = (server) => {
   const io = new Server(server, {
     cors: {
-      origin: ['http://192.168.0.101:5173', 'http://localhost:5173'],
+      origin: ['https://vc.mbxd.xyz', 'http://localhost:5173'],
       methods: ["GET", "POST"],
     },
   });
