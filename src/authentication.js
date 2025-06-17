@@ -34,7 +34,8 @@ const corsOptions = {
     const allowedOrigins = [
       'http://localhost:5173',  
       'https://vc.mbxd.xyz',   
-      'http://localhost:3000'   
+      'http://localhost:3000',
+      'http://vc.mbxd.xyz'  
     ];
     
     if (allowedOrigins.indexOf(origin) !== -1) {
