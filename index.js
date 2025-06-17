@@ -7,13 +7,6 @@ const cors = require("cors");
 
 const app = express();   
 
-const corsOptions = {
-  origin: "http://localhost:5173",  
-  methods: ['GET', 'POST', 'OPTIONS'], 
-  credentials: true,  
-  allowedHeaders: ['Content-Type', 'Authorization'], 
-
-};
 
 app.use(cors(corsOptions));
 app.options('*', cors()); // Handle preflight
