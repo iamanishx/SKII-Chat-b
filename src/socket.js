@@ -15,18 +15,12 @@ module.exports = (server) => {
         },
     });
 
+    // ...existing code...
     io.on("connection", (socket) => {
         console.log(`Socket Connected`, socket.id);
 
-        // SINGLE room:join handler - FIXED
         socket.on("room:join", (data) => {
             const { email, room } = data;
-            
-            if (!email || !room) {
-                console.error("Invalid room or email");
-                return;
-            }
-            
             console.log(`User ${email} joining room ${room}`);
 
             emailToSocketIdMap.set(email, socket.id);
@@ -34,22 +28,18 @@ module.exports = (server) => {
             socketToRoomMap.set(socket.id, room);
 
             socket.join(room);
-            
-            // Include room parameter in emission - THIS WAS MISSING
-            socket.to(room).emit("user:joined", { 
-                email, 
-                id: socket.id, 
-                room  // Add room here!
-            });
-            
+            socket.to(room).emit("user:joined", { email, id: socket.id });
             io.to(socket.id).emit("room:join", {
                 ...data,
                 socketId: socket.id,
             });
         });
 
-        socket.on("user:call", ({ to, offer, room }) => {
-            console.log(`Call initiated in room ${room} from ${socket.id} to ${to}`);
+        socket.on("user:call", ({ to, offer }) => {
+            const room = socketToRoomMap.get(socket.id);
+            console.log(
+                `Call initiated in room ${room} from ${socket.id} to ${to}`
+            );
             io.to(to).emit("incoming:call", {
                 from: socket.id,
                 offer,
@@ -58,15 +48,24 @@ module.exports = (server) => {
         });
 
         socket.on("peer:ice-candidate", ({ candidate, to, room }) => {
-            console.log(`📤 Forwarding ICE candidate from ${socket.id} to ${to} in room ${room}`);
+            console.log(
+                `ICE candidate from ${socket.id} to ${to} in room ${room}`
+            );
             io.to(to).emit("peer:ice-candidate", {
                 candidate,
                 from: socket.id,
                 room,
             });
         });
+        socket.on("room:join", ({ room, email }) => {
+            socket.join(room);
+            socket.broadcast
+                .to(room)
+                .emit("user:joined", { id: socket.id, room, email });
+        });
 
-        socket.on("call:accepted", ({ to, answer, room }) => {
+        socket.on("call:accepted", ({ to, answer }) => {
+            const room = socketToRoomMap.get(socket.id);
             console.log(`Call accepted in room ${room} by ${socket.id}`);
             io.to(to).emit("call:accepted", {
                 from: socket.id,
