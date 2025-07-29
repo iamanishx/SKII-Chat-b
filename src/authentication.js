@@ -79,28 +79,63 @@ router.get(
 
 router.get(
   "/google/callback",
-  passport.authenticate("google", { failureRedirect: "/" }),
+  passport.authenticate("google", { 
+    failureRedirect: process.env.FRONTEND_URL + "/?error=auth_failed" 
+  }),
   (req, res) => {
+    // Successful authentication
     res.redirect(process.env.FRONTEND_URL + "/home");
   }
 );
 
-router.get("/logout", (req, res) => {
+// Enhanced logout with proper session cleanup
+router.post("/logout", (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ message: "Not authenticated" });
+  }
+
   req.logout((err) => {
     if (err) {
       console.error("Error during logout:", err);
       return res.status(500).json({ message: "Logout failed" });
     }
-    res.redirect(process.env.FRONTEND_URL);
+    
+    // Destroy session
+    req.session.destroy((err) => {
+      if (err) {
+        console.error("Error destroying session:", err);
+        return res.status(500).json({ message: "Session cleanup failed" });
+      }
+      
+      res.clearCookie('connect.sid'); // Clear session cookie
+      res.json({ message: "Logged out successfully" });
+    });
   });
 });
 
+// Enhanced user info endpoint with better error handling
 router.get("/user/email", (req, res) => {
-  if (req.isAuthenticated()) {
-    res.json({ email: req.user.email });
+  if (req.isAuthenticated() && req.user) {
+    res.json({ 
+      email: req.user.email,
+      name: req.user.name,
+      id: req.user._id
+    });
   } else {
-    res.status(401).json({ message: "Unauthorized" });
+    res.status(401).json({ message: "Not authenticated" });
   }
+});
+
+// Additional security: Check authentication status
+router.get("/user/status", (req, res) => {
+  res.json({ 
+    isAuthenticated: req.isAuthenticated(),
+    user: req.isAuthenticated() ? {
+      email: req.user.email,
+      name: req.user.name,
+      id: req.user._id
+    } : null
+  });
 });
 
 module.exports = router;
