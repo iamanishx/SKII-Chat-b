@@ -6,13 +6,11 @@ const mongoose = require("mongoose");
 const sessionConfig = require("./config/sessionConfig"); 
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
-// MongoDB Connection
 mongoose
   .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
-// User Schema and Model
 const userSchema = new mongoose.Schema({
   oauthId: { type: String, required: true, unique: true },
   name: { type: String, required: true },
@@ -21,7 +19,6 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model("User", userSchema);
 
-// Create Express Router instead of app
 const router = express.Router();
 
 router.use(express.json());
@@ -88,7 +85,6 @@ router.get(
   }
 );
 
-// Enhanced logout with proper session cleanup
 router.post("/logout", (req, res) => {
   if (!req.isAuthenticated()) {
     return res.status(401).json({ message: "Not authenticated" });
@@ -100,7 +96,6 @@ router.post("/logout", (req, res) => {
       return res.status(500).json({ message: "Logout failed" });
     }
     
-    // Destroy session
     req.session.destroy((err) => {
       if (err) {
         console.error("Error destroying session:", err);
@@ -113,7 +108,7 @@ router.post("/logout", (req, res) => {
   });
 });
 
-// Enhanced user info endpoint with better error handling
+
 router.get("/user/email", (req, res) => {
   if (req.isAuthenticated() && req.user) {
     res.json({ 
@@ -126,7 +121,6 @@ router.get("/user/email", (req, res) => {
   }
 });
 
-// Additional security: Check authentication status
 router.get("/user/status", (req, res) => {
   res.json({ 
     isAuthenticated: req.isAuthenticated(),
