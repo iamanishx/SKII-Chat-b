@@ -16,7 +16,7 @@ const corsOptions = {
       callback(null, true);
     } else {
       console.log(`CORS blocked for origin: ${origin}`);
-      callback(new Error('Not allowed by CORS'));
+      callback(new Error(`CORS policy violation. Origin ${origin} is not allowed.`));
     }
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -27,11 +27,12 @@ const corsOptions = {
     'Origin', 
     'X-Requested-With', 
     'Accept',
-    'Cookie'
+    'Cookie',
+    'X-CSRF-Token'
   ],
   exposedHeaders: ['Set-Cookie'],
-  optionsSuccessStatus: 200,
-  preflightContinue: false
+  optionsSuccessStatus: 200, // Some legacy browsers choke on 204
+  maxAge: 86400 // 24 hours
 };
 
 module.exports = { corsOptions, allowedOrigins };

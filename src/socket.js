@@ -27,7 +27,6 @@ module.exports = (server) => {
             socketToRoomMap.set(socket.id, room);
 
             socket.join(room);
-            // ADD ROOM TO EMISSION - This was missing!
             socket.to(room).emit("user:joined", { email, id: socket.id, room });
             io.to(socket.id).emit("room:join", {
                 ...data,
@@ -45,7 +44,6 @@ module.exports = (server) => {
             });
         });
 
-        // ICE CANDIDATE FORWARDING - This was missing!
         socket.on("peer:ice-candidate", ({ candidate, to, room }) => {
             console.log(`📤 Forwarding ICE candidate from ${socket.id} to ${to} in room ${room}`);
             io.to(to).emit("peer:ice-candidate", {

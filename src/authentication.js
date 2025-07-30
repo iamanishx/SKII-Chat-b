@@ -6,13 +6,11 @@ const mongoose = require("mongoose");
 const sessionConfig = require("./config/sessionConfig"); 
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
-// MongoDB Connection
 mongoose
   .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
-// User Schema and Model
 const userSchema = new mongoose.Schema({
   oauthId: { type: String, required: true, unique: true },
   name: { type: String, required: true },
@@ -21,7 +19,6 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model("User", userSchema);
 
-// Create Express Router instead of app
 const router = express.Router();
 
 router.use(express.json());
@@ -79,28 +76,60 @@ router.get(
 
 router.get(
   "/google/callback",
-  passport.authenticate("google", { failureRedirect: "/" }),
+  passport.authenticate("google", { 
+    failureRedirect: process.env.FRONTEND_URL + "/?error=auth_failed" 
+  }),
   (req, res) => {
+    // Successful authentication
     res.redirect(process.env.FRONTEND_URL + "/home");
   }
 );
 
-router.get("/logout", (req, res) => {
+router.post("/logout", (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ message: "Not authenticated" });
+  }
+
   req.logout((err) => {
     if (err) {
       console.error("Error during logout:", err);
       return res.status(500).json({ message: "Logout failed" });
     }
-    res.redirect(process.env.FRONTEND_URL);
+    
+    req.session.destroy((err) => {
+      if (err) {
+        console.error("Error destroying session:", err);
+        return res.status(500).json({ message: "Session cleanup failed" });
+      }
+      
+      res.clearCookie('connect.sid'); // Clear session cookie
+      res.json({ message: "Logged out successfully" });
+    });
   });
 });
 
+
 router.get("/user/email", (req, res) => {
-  if (req.isAuthenticated()) {
-    res.json({ email: req.user.email });
+  if (req.isAuthenticated() && req.user) {
+    res.json({ 
+      email: req.user.email,
+      name: req.user.name,
+      id: req.user._id
+    });
   } else {
-    res.status(401).json({ message: "Unauthorized" });
+    res.status(401).json({ message: "Not authenticated" });
   }
+});
+
+router.get("/user/status", (req, res) => {
+  res.json({ 
+    isAuthenticated: req.isAuthenticated(),
+    user: req.isAuthenticated() ? {
+      email: req.user.email,
+      name: req.user.name,
+      id: req.user._id
+    } : null
+  });
 });
 
 module.exports = router;
